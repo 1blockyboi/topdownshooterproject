@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     //public variables
     public float xDirectionBufferAmount = 0.05f;
     public float yDirectionBufferAmount = 0.05f;
+    public float movementSpeedx = 5.0f;
+    public float movementSpeedy = 5.0f;
     public float frictionAmount = 50.0f;
     float jumpBufferAmount = 1.0f;
     public KeyCode leftDirectionInput = KeyCode.A;
@@ -27,9 +29,9 @@ public class PlayerController : MonoBehaviour
     public KeyCode upDirectionInput = KeyCode.W;
     public KeyCode downDirectionInput = KeyCode.S;
     public KeyCode jumpInput = KeyCode.Space;
-    public GameObject playerSprite;
     public float maxJumpHeight = 1.0f;
     public float jumpSpeed = 1.0f;
+    SpriteHeightController heightController;
 
 
 
@@ -43,6 +45,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        heightController = GetComponent<SpriteHeightController>();
     }
 
     // Update is called once per frame
@@ -115,23 +118,23 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(leftDirectionInput) || (yDirectionPressed && xDirectionBufferCount < 0.0f))
             {
                 xDirectionPressed = true;
-                xdirection += -5.0f;
+                xdirection += -movementSpeedx;
                 if (Input.GetKey(leftDirectionInput)) xDirectionBufferCount = -xDirectionBufferAmount;
             }
             if (Input.GetKey(rightDirectionInput) || (yDirectionPressed && xDirectionBufferCount > 0.0f))
             {
                 xDirectionPressed = true;
-                xdirection += 5.0f;
+                xdirection += movementSpeedx;
                 if (Input.GetKey(rightDirectionInput)) xDirectionBufferCount = xDirectionBufferAmount;
             }
             if (Input.GetKey(upDirectionInput) || (xDirectionPressed && yDirectionBufferCount > 0.0f))
             {
-                ydirection += 5.0f;
+                ydirection += movementSpeedy;
                 if (Input.GetKey(upDirectionInput)) yDirectionBufferCount = yDirectionBufferAmount;
             }
             if (Input.GetKey(downDirectionInput) || (xDirectionPressed && yDirectionBufferCount < 0.0f))
             {
-                ydirection += -5.0f;
+                ydirection += -movementSpeedy;
                 if (Input.GetKey(downDirectionInput)) yDirectionBufferCount = -yDirectionBufferAmount;
             }
 
@@ -146,23 +149,24 @@ public class PlayerController : MonoBehaviour
             //Jump arc math
             additionalHeight = -4.0f * Mathf.Pow((jumpBufferAmount - jumpBufferCount) - 0.5f, 2) + 1;
 
-            playerSprite.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y + additionalHeight);
+            heightController.ChangeHeight(additionalHeight);
+            //playerSprite.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y + additionalHeight);
 
             if (xDirectionBufferCount > 0.0f)
             {
-                xdirection += 5.0f;
+                xdirection += movementSpeedx;
             }
             else if (xDirectionBufferCount < 0.0f)
             {
-                xdirection -= 5.0f;
+                xdirection -= movementSpeedx;
             }
             if (yDirectionBufferCount > 0.0f)
             {
-                ydirection += 5.0f;
+                ydirection += movementSpeedy;
             }
             else if (yDirectionBufferCount < 0.0f)
             {
-                ydirection -= 5.0f;
+                ydirection -= movementSpeedy;
             }       
         }
         //Movement based on input/buffer is applied.
